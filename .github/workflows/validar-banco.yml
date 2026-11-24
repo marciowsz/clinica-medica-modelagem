@@ -1,0 +1,40 @@
+name: Validar banco
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  postgresql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: clinica_medica
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: clinica_medica
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Criar tabelas (01_ddl.sql)
+        run: psql -v ON_ERROR_STOP=1 -f database/01_ddl.sql
+
+      - name: Inserir dados de teste (02_dml.sql)
+        run: psql -v ON_ERROR_STOP=1 -f database/02_dml.sql
+
+      - name: Testar integridade PK/FK (03_integridade.sql)
+        run: psql -v ON_ERROR_STOP=1 -f database/03_integridade.sql

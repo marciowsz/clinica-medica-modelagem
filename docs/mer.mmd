@@ -1,0 +1,60 @@
+%% MER conceitual (notacao de Chen) - Clinica Medica
+%% retangulo = entidade | losango = relacionamento | elipse = atributo
+%% atributo sublinhado = identificador | elipse dupla = multivalorado
+flowchart LR
+    classDef ent fill:#dbeafe,stroke:#1e40af,stroke-width:2px,color:#0f172a,font-weight:bold
+    classDef rel fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#0f172a
+    classDef att fill:#ffffff,stroke:#64748b,color:#0f172a
+
+    PAC[PACIENTE]:::ent
+    MED[MÉDICO]:::ent
+    ESP[ESPECIALIDADE]:::ent
+    CON[CONSULTA]:::ent
+    PRO[PRONTUÁRIO]:::ent
+    MEDC[MEDICAMENTO]:::ent
+    PAG[PAGAMENTO]:::ent
+
+    R_AGENDA{agenda}:::rel
+    R_REALIZA{realiza}:::rel
+    R_POSSUI{possui}:::rel
+    R_GERA{gera}:::rel
+    R_PRESC{prescreve}:::rel
+    R_QUITA{quitada por}:::rel
+
+    PAC ---|"1"| R_AGENDA ---|"N"| CON
+    MED ---|"1"| R_REALIZA ---|"N"| CON
+    MED ---|"N"| R_POSSUI ---|"1"| ESP
+    CON ---|"1"| R_GERA ---|"1"| PRO
+    CON ---|"N"| R_PRESC ---|"N"| MEDC
+    CON ---|"1"| R_QUITA ---|"1"| PAG
+
+    a_pac_id(["<u>cpf</u>"]):::att --- PAC
+    a_pac_nome([nome]):::att --- PAC
+    a_pac_nasc([data_nascimento]):::att --- PAC
+    a_pac_email([email]):::att --- PAC
+    a_pac_tel(((telefone))):::att --- PAC
+
+    MED --- a_med_crm(["<u>crm</u>"]):::att
+    MED --- a_med_nome([nome]):::att
+    MED --- a_med_valor([valor_consulta]):::att
+
+    ESP --- a_esp_nome(["<u>nome</u>"]):::att
+    ESP --- a_esp_desc([descricao]):::att
+
+    CON --- a_con_id(["<u>id</u>"]):::att
+    CON --- a_con_dh([data_hora]):::att
+    CON --- a_con_st([status]):::att
+    CON --- a_con_valor([valor]):::att
+
+    PRO --- a_pro_diag([diagnostico]):::att
+    PRO --- a_pro_obs([observacoes]):::att
+
+    R_PRESC --- a_pr_pos([posologia]):::att
+    R_PRESC --- a_pr_dur([duracao_dias]):::att
+
+    MEDC --- a_md_nome(["<u>nome + apresentacao</u>"]):::att
+    MEDC --- a_md_pa([principio_ativo]):::att
+
+    PAG --- a_pag_forma([forma]):::att
+    PAG --- a_pag_valor([valor]):::att
+    PAG --- a_pag_data([pago_em]):::att

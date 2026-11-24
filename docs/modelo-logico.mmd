@@ -1,0 +1,68 @@
+%% Modelo logico (tabelas normalizadas ate a 3FN) - Clinica Medica
+erDiagram
+    especialidades ||--o{ medicos : "possui"
+    pacientes ||--o{ paciente_telefones : "tem"
+    pacientes ||--o{ consultas : "agenda"
+    medicos ||--o{ consultas : "realiza"
+    consultas ||--o| prontuarios : "gera"
+    consultas ||--o{ prescricoes : "prescreve"
+    medicamentos ||--o{ prescricoes : "aparece em"
+    consultas ||--o| pagamentos : "quitada por"
+
+    especialidades {
+        serial id PK
+        varchar nome UK
+        varchar descricao
+    }
+    pacientes {
+        serial id PK
+        char cpf UK
+        varchar nome
+        date data_nascimento
+        varchar email UK
+    }
+    paciente_telefones {
+        int paciente_id PK,FK
+        varchar telefone PK
+        varchar tipo
+    }
+    medicos {
+        serial id PK
+        varchar crm UK
+        varchar nome
+        int especialidade_id FK
+        numeric valor_consulta
+    }
+    consultas {
+        serial id PK
+        int paciente_id FK
+        int medico_id FK
+        timestamp data_hora
+        varchar status
+        numeric valor
+    }
+    prontuarios {
+        int consulta_id PK,FK
+        text diagnostico
+        text observacoes
+        timestamp criado_em
+    }
+    medicamentos {
+        serial id PK
+        varchar nome
+        varchar principio_ativo
+        varchar apresentacao
+    }
+    prescricoes {
+        int consulta_id PK,FK
+        int medicamento_id PK,FK
+        varchar posologia
+        int duracao_dias
+    }
+    pagamentos {
+        serial id PK
+        int consulta_id FK,UK
+        numeric valor
+        varchar forma
+        timestamp pago_em
+    }
